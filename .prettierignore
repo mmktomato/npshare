@@ -1,0 +1,8 @@
+package.json
+package-lock.json
+
+*.d.ts
+*.md
+
+dist
+node_modules
