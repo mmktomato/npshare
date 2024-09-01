@@ -1,11 +1,18 @@
 import { useEffect } from "react";
-import { type PlaybackState } from "@spotify/web-api-ts-sdk";
-import styles from "./App.module.css";
+import useSwr from "swr";
+import { SpotifyApi } from "@spotify/web-api-ts-sdk";
 
+import styles from "./App.module.css";
 import { useSpotify } from "./utils/spotify";
 
+const useSpotifyFetcher = <T,>(spotify: SpotifyApi | null, key: string, fetcher: (api: SpotifyApi) => Promise<T>) => {
+  return useSwr(spotify ? [key, spotify] : null, ([, spotify]) => {
+    return fetcher(spotify);
+  });
+};
+
 export const App = () => {
-  const { spotifySdk, startAuthorization, handleAuthorizationCallback } = useSpotify();
+  const { spotifyApi, startAuthorization, handleAuthorizationCallback, isAuthenticated } = useSpotify();
 
   useEffect(() => {
     const url = new URL(window.location.href);
@@ -15,28 +22,38 @@ export const App = () => {
     }
   }, [handleAuthorizationCallback]);
 
-  useEffect(() => {
-    (async () => {
-      if (spotifySdk) {
-        const user = await spotifySdk.currentUser.profile();
-        const userName = user.display_name;
-        console.log(userName);
+  const {
+    data: user,
+    error: userError,
+    isLoading: isUserLoading,
+  } = useSpotifyFetcher(spotifyApi, "currentUser", api => api.currentUser.profile());
 
-        // Can be null despite the type isn't nullable.'
-        const currentTrack: PlaybackState | null = await spotifySdk.player.getCurrentlyPlayingTrack();
-        const type = currentTrack?.currently_playing_type;
-        console.log(type);
-      }
-    })();
-  }, [spotifySdk]);
+  const {
+    data: currentTrack,
+    error: currentTrackError,
+    isLoading: isCurrentTrackLoading,
+  } = useSpotifyFetcher(spotifyApi, "currentTrack", api => api.player.getCurrentlyPlayingTrack());
 
   const onAuthClick = () => {
     startAuthorization();
   };
 
+  if (!isAuthenticated) {
+    return <button onClick={onAuthClick}>auth</button>;
+  }
+
   return (
     <div className={styles.text}>
-      {spotifySdk ? <div>See console.</div> : <button onClick={onAuthClick}>auth</button>}
+      {isUserLoading || isCurrentTrackLoading ? <div>loading...</div> : null}
+      {userError || currentTrackError ? <div>ERROR</div> : null}
+      {user ? <div>{user.display_name}</div> : null}
+      {currentTrack ? (
+        <div>
+          {currentTrack.currently_playing_type} {currentTrack.item.name}
+        </div>
+      ) : (
+        "No track playing"
+      )}
     </div>
   );
 };

@@ -30,10 +30,9 @@ const AUTHORIZED_DATE_TIME_KEY = "spotify_authorized_date_time";
 let isInitializingOrDone = false;
 
 export const useSpotify = () => {
-  const [spotifySdk, setSpotifySdk] = useState<SpotifyApi | null>(null);
+  const [spotifyApi, setSpotifyApi] = useState<SpotifyApi | null>(null);
 
   useEffect(() => {
-    console.log(isInitializingOrDone);
     if (isInitializingOrDone) {
       return;
     }
@@ -51,8 +50,8 @@ export const useSpotify = () => {
           localStorage.setItem(ACCESS_TOKEN_KEY, JSON.stringify(accessToken));
           localStorage.setItem(AUTHORIZED_DATE_TIME_KEY, new Date().getTime().toString());
         }
-        const sdk = SpotifyApi.withAccessToken(SPOTIFY_CLIENT_ID, accessToken);
-        setSpotifySdk(sdk);
+        const api = SpotifyApi.withAccessToken(SPOTIFY_CLIENT_ID, accessToken);
+        setSpotifyApi(api);
       }
     })();
   }, []);
@@ -84,7 +83,7 @@ export const useSpotify = () => {
     }
   };
 
-  return { spotifySdk, startAuthorization, handleAuthorizationCallback };
+  return { spotifyApi, startAuthorization, handleAuthorizationCallback, isAuthenticated: !!spotifyApi };
 };
 
 const redirectToAuthorizationEndpoint = (codeChallenge: string) => {
