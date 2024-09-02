@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import styles from "./App.module.css";
 import { useSpotify } from "./utils/spotify";
 import { Share } from "./components/Share";
+import { Cover } from "./components/Cover";
 
 export const App = () => {
   const { spotifyApi, startAuthorization, handleAuthorizationCallback } = useSpotify();
@@ -21,7 +22,14 @@ export const App = () => {
 
   return (
     <div className={styles.text}>
-      {spotifyApi ? <Share spotifyApi={spotifyApi} /> : <button onClick={onAuthClick}>auth</button>}
+      {spotifyApi ? (
+        <>
+          <Cover spotifyApi={spotifyApi} />
+          <Share spotifyApi={spotifyApi} />
+        </>
+      ) : (
+        <button onClick={onAuthClick}>auth</button>
+      )}
     </div>
   );
 };
