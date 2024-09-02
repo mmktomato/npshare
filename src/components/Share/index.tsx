@@ -2,6 +2,7 @@ import { useState } from "react";
 import { type SpotifyApi, type PlaybackState, type Track } from "@spotify/web-api-ts-sdk";
 
 import { useSpotifyFetcher, CURRENT_TRACK_KEY } from "../../utils/spotifyFetcher";
+import ShareIcon from "../../assets/share.svg?react";
 
 interface ShareProps {
   spotifyApi: SpotifyApi;
@@ -27,17 +28,18 @@ export const Share: React.FC<ShareProps> = ({ spotifyApi }) => {
   const isShareSupported = "share" in navigator;
 
   return (
-    <div className="flex gap-4">
+    <div className="flex gap-4 items-center">
       <textarea
         className="h-24 leading-6 p-2 border rounded border-gray-400"
         defaultValue={buildShareText(currentTrack, "album")}
         onChange={onChange}
       />
       <button
+        className="w-fit h-fit"
         disabled={!isShareSupported}
         onClick={() => share(currentTrack, text, "album")}
       >
-        Share
+        <ShareIcon className="w-10 h-10" />
       </button>
     </div>
   );

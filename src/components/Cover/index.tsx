@@ -22,7 +22,7 @@ export const Cover: React.FC<CoverProps> = ({ spotifyApi }) => {
     <div className="flex justify-center">
       {currentTrack ? (
         <img
-          className="w-1/2 max-w-sm"
+          className="w-60"
           src={getCoverUrl(currentTrack)}
           alt={currentTrack.item.name}
         />
@@ -44,5 +44,5 @@ const getCoverUrl = (currentTrack: PlaybackState) => {
 };
 
 const CoverPlaceHolder: React.FC<{ text: string }> = ({ text }) => (
-  <div className="w-1/2 max-w-sm h-1/2 max-h-sm">{text}</div>
+  <div className="flex justify-center items-center w-60 h-60 border rounded border-gray-400">{text}</div>
 );
