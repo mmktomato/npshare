@@ -83,7 +83,7 @@ export const useSpotify = () => {
     }
   };
 
-  return { spotifyApi, startAuthorization, handleAuthorizationCallback, isAuthenticated: !!spotifyApi };
+  return { spotifyApi, startAuthorization, handleAuthorizationCallback };
 };
 
 const redirectToAuthorizationEndpoint = (codeChallenge: string) => {
