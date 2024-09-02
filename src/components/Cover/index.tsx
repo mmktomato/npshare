@@ -19,13 +19,15 @@ export const Cover: React.FC<CoverProps> = ({ spotifyApi }) => {
   }
 
   return (
-    <div>
-      {isLoading && <div>Loading...</div>}
-      {currentTrack && (
+    <div className="flex justify-center">
+      {currentTrack ? (
         <img
+          className="w-1/2 max-w-sm"
           src={getCoverUrl(currentTrack)}
           alt={currentTrack.item.name}
         />
+      ) : (
+        <CoverPlaceHolder text={isLoading ? "Loading..." : "No track is playing"} />
       )}
     </div>
   );
@@ -40,3 +42,7 @@ const getCoverUrl = (currentTrack: PlaybackState) => {
     return item.images[0].url;
   }
 };
+
+const CoverPlaceHolder: React.FC<{ text: string }> = ({ text }) => (
+  <div className="w-1/2 max-w-sm h-1/2 max-h-sm">{text}</div>
+);

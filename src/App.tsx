@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 
-import styles from "./App.module.css";
 import { useSpotify } from "./utils/spotify";
 import { Share } from "./components/Share";
 import { Cover } from "./components/Cover";
@@ -21,7 +20,7 @@ export const App = () => {
   };
 
   return (
-    <div className={styles.text}>
+    <div className="flex flex-col items-center gap-4 m-4">
       {spotifyApi ? (
         <>
           <Cover spotifyApi={spotifyApi} />

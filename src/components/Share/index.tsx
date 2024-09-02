@@ -14,7 +14,7 @@ export const Share: React.FC<ShareProps> = ({ spotifyApi }) => {
     isLoading,
   } = useSpotifyFetcher(spotifyApi, CURRENT_TRACK_KEY, api => api.player.getCurrentlyPlayingTrack());
   const [text, setText] = useState("");
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => setText(e.target.value);
+  const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => setText(e.target.value);
 
   if (isLoading || !currentTrack) {
     return null;
@@ -27,9 +27,10 @@ export const Share: React.FC<ShareProps> = ({ spotifyApi }) => {
   const isShareSupported = "share" in navigator;
 
   return (
-    <div>
-      <input
-        value={buildShareText(currentTrack, "album")}
+    <div className="flex gap-4">
+      <textarea
+        className="h-24 leading-6 p-2 border rounded border-gray-400"
+        defaultValue={buildShareText(currentTrack, "album")}
         onChange={onChange}
       />
       <button
