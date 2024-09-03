@@ -6,8 +6,9 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite --port 3456",
-    "build": "npm run lint && tsc -b && vite build",
+    "build": "tsc -b && vite build",
     "lint": "eslint . && prettier --check .",
+    "test": "npm run lint",
     "preview": "vite preview"
   },
   "dependencies": {
