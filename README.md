@@ -14,4 +14,5 @@ Copy `.env.sample` and set it up.
 
 ```bash
 $ cp .env.sample .env.local
+$ cp .env.sample .env.production
 ```

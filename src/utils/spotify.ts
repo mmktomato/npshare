@@ -4,13 +4,12 @@ import { SpotifyApi, type AccessToken } from "@spotify/web-api-ts-sdk";
 import { generateRandomString, generateCodeChallenge, isExpired } from "./auth";
 
 const SPOTIFY_CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
+const SPOTIFY_REDIRECT_URI = import.meta.env.VITE_SPOTIFY_REDIRECT_URI;
 const SPOTIFY_SCOPES = ["user-read-private", "user-read-email", "user-read-currently-playing"];
 const SPOTIFY_AUTHORIZATION_ENDPOINT = "https://accounts.spotify.com/authorize";
 const SPOTIFY_TOKEN_ENDPOINT = "https://accounts.spotify.com/api/token";
 
-// TODO: Change this value when production.
-const REDIRECT_URI = "http://localhost:3456";
-const APP_ROOT_URI = "http://localhost:3456";
+const APP_ROOT_URI = import.meta.env.VITE_APP_ROOT_URI;
 
 const CODE_VERIFIER_KEY = "spotify_code_verifier";
 const AUTH_STATE_KEY = "spotify_auth_state";
@@ -93,7 +92,7 @@ const redirectToAuthorizationEndpoint = (codeChallenge: string) => {
   const searchParams = new URLSearchParams({
     client_id: SPOTIFY_CLIENT_ID,
     response_type: "code",
-    redirect_uri: REDIRECT_URI,
+    redirect_uri: SPOTIFY_REDIRECT_URI,
     state,
     scope: SPOTIFY_SCOPES.join(" "),
     code_challenge_method: "S256",
@@ -115,7 +114,7 @@ const getTokenByCallback = async (code: string) => {
     client_id: SPOTIFY_CLIENT_ID,
     grant_type: "authorization_code",
     code,
-    redirect_uri: REDIRECT_URI,
+    redirect_uri: SPOTIFY_REDIRECT_URI,
     code_verifier: codeVerifier,
   });
 
