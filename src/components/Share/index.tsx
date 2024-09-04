@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { type SpotifyApi, type PlaybackState, type Track } from "@spotify/web-api-ts-sdk";
 
 import { useSpotifyFetcher, CURRENT_TRACK_KEY } from "../../utils/spotifyFetcher";
@@ -17,6 +17,12 @@ export const Share: React.FC<ShareProps> = ({ spotifyApi }) => {
   const [text, setText] = useState("");
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => setText(e.target.value);
 
+  useEffect(() => {
+    if (currentTrack) {
+      setText(buildShareText(currentTrack, "album"));
+    }
+  }, [currentTrack]);
+
   if (isLoading || !currentTrack) {
     return null;
   }
@@ -31,7 +37,7 @@ export const Share: React.FC<ShareProps> = ({ spotifyApi }) => {
     <div className="flex gap-4 items-center">
       <textarea
         className="h-24 leading-6 p-2 border rounded border-gray-400"
-        defaultValue={buildShareText(currentTrack, "album")}
+        value={text}
         onChange={onChange}
       />
       <button
@@ -69,11 +75,13 @@ const getShareUrl = (currentTrack: PlaybackState, type: ShareType) => {
 
 const share = async (currentTrack: PlaybackState, text: string, type: ShareType) => {
   try {
-    await navigator.share({
+    const shareData = {
       // title,
       text,
       url: getShareUrl(currentTrack, type) || undefined,
-    });
+    };
+    // console.log(shareData);
+    await navigator.share(shareData);
   } catch (e) {
     if (!(e instanceof DOMException) || e.name !== "AbortError") {
       console.error(e);
