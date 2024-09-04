@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "vite --port 3456",
     "build": "tsc -b && vite build",
-    "lint": "tsc --noEmit && eslint . && prettier --check .",
+    "lint": "eslint . && prettier --check .",
     "test": "npm run lint",
     "preview": "vite preview"
   },
