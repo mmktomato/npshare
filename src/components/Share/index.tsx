@@ -43,7 +43,7 @@ export const Share: React.FC<ShareProps> = ({ spotifyApi }) => {
       <button
         className="w-fit h-fit"
         disabled={!isShareSupported}
-        onClick={() => share(currentTrack, text, "album")}
+        onClick={() => share(text)}
       >
         <ShareIcon className="w-10 h-10" />
       </button>
@@ -64,21 +64,12 @@ const buildShareText = (currentTrack: PlaybackState, type: ShareType) => {
   return type === "track" ? `${artists} - ${item.name} #np` : `${artists} - ${item.album.name} #np`;
 };
 
-const getShareUrl = (currentTrack: PlaybackState, type: ShareType) => {
-  if (currentTrack.currently_playing_type !== "track") {
-    return null;
-  }
-
-  const item = currentTrack.item as Track;
-  return type === "track" ? item.external_urls.spotify : item.album.external_urls.spotify;
-};
-
-const share = async (currentTrack: PlaybackState, text: string, type: ShareType) => {
+const share = async (text: string) => {
   try {
     const shareData = {
       // title,
       text,
-      url: getShareUrl(currentTrack, type) || undefined,
+      // url,
     };
     // console.log(shareData);
     await navigator.share(shareData);
