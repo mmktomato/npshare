@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -22,6 +24,10 @@ jobs:
       - name: Test
         run: npm test
       - name: Build
+        env:
+          VITE_SPOTIFY_CLIENT_ID: ${{ secrets.VITE_SPOTIFY_CLIENT_ID }}
+          VITE_SPOTIFY_REDIRECT_URI: ${{ secrets.VITE_SPOTIFY_REDIRECT_URI }}
+          VITE_APP_ROOT_URI: ${{ secrets.VITE_APP_ROOT_URI }}
         run: npm run build
       - name: Upload
         uses: actions/upload-pages-artifact@v3
