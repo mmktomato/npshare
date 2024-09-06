@@ -19,7 +19,7 @@ export const Share: React.FC<ShareProps> = ({ spotifyApi }) => {
 
   useEffect(() => {
     if (currentTrack) {
-      setText(buildShareText(currentTrack, "album"));
+      setText(buildDefaultShareText(currentTrack, "album"));
     }
   }, [currentTrack]);
 
@@ -53,7 +53,7 @@ export const Share: React.FC<ShareProps> = ({ spotifyApi }) => {
 
 type ShareType = "track" | "album";
 
-const buildShareText = (currentTrack: PlaybackState, type: ShareType) => {
+const buildDefaultShareText = (currentTrack: PlaybackState, type: ShareType) => {
   if (currentTrack.currently_playing_type !== "track") {
     return "Not playing a track.";
   }
@@ -73,15 +73,20 @@ const getShareUrl = (currentTrack: PlaybackState, type: ShareType) => {
   return type === "track" ? item.external_urls.spotify : item.album.external_urls.spotify;
 };
 
-const share = async (currentTrack: PlaybackState, text: string, type: ShareType) => {
+const share = async (currentTrack: PlaybackState, textareaText: string, type: ShareType) => {
+  // Chrome (Android): `text`` is concatination of `url` and `text`(?)
+  // Firefox (Android): Only `url` is used(?)
+  const shareUrl = getShareUrl(currentTrack, type) || undefined;
+  const shareText = shareUrl ? `${textareaText}\n${shareUrl}` : textareaText;
+  const shareOpt = {
+    // title:
+    text: shareText,
+    // url:
+  };
+  // console.log(shareOpt);
+
   try {
-    const shareData = {
-      // title,
-      text,
-      url: getShareUrl(currentTrack, type) || undefined,
-    };
-    // console.log(shareData);
-    await navigator.share(shareData);
+    await navigator.share(shareOpt);
   } catch (e) {
     if (!(e instanceof DOMException) || e.name !== "AbortError") {
       console.error(e);
