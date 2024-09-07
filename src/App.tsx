@@ -24,7 +24,18 @@ export const App = () => {
       {spotifyApi ? (
         <>
           <Cover spotifyApi={spotifyApi} />
-          <Share spotifyApi={spotifyApi} />
+          <div className="flex gap-4 max-w-64 overflow-x-scroll snap-x snap-mandatory">
+            <Share
+              type="album"
+              className="snap-start"
+              spotifyApi={spotifyApi}
+            />
+            <Share
+              type="track"
+              className="snap-start"
+              spotifyApi={spotifyApi}
+            />
+          </div>
         </>
       ) : (
         <button onClick={onAuthClick}>auth</button>

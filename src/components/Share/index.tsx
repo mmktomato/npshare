@@ -1,14 +1,19 @@
 import { useEffect, useState } from "react";
 import { type SpotifyApi, type PlaybackState, type Track } from "@spotify/web-api-ts-sdk";
+import { clsx } from "clsx";
 
 import { useSpotifyFetcher, CURRENT_TRACK_KEY } from "../../utils/spotifyFetcher";
 import ShareIcon from "../../assets/share.svg?react";
 
+type ShareType = "track" | "album";
+
 interface ShareProps {
   spotifyApi: SpotifyApi;
+  className?: string;
+  type: ShareType;
 }
 
-export const Share: React.FC<ShareProps> = ({ spotifyApi }) => {
+export const Share: React.FC<ShareProps> = ({ spotifyApi, className, type }) => {
   const {
     data: currentTrack,
     error,
@@ -19,9 +24,9 @@ export const Share: React.FC<ShareProps> = ({ spotifyApi }) => {
 
   useEffect(() => {
     if (currentTrack) {
-      setText(buildDefaultShareText(currentTrack, "album"));
+      setText(buildDefaultShareText(currentTrack, type));
     }
-  }, [currentTrack]);
+  }, [currentTrack, type]);
 
   if (isLoading || !currentTrack) {
     return null;
@@ -34,7 +39,7 @@ export const Share: React.FC<ShareProps> = ({ spotifyApi }) => {
   const isShareSupported = "share" in navigator;
 
   return (
-    <div className="flex gap-4 items-center">
+    <div className={clsx("flex", "gap-4", "items-center", className)}>
       <textarea
         className="h-24 leading-6 p-2 border rounded border-gray-400"
         value={text}
@@ -43,15 +48,13 @@ export const Share: React.FC<ShareProps> = ({ spotifyApi }) => {
       <button
         className="w-fit h-fit"
         disabled={!isShareSupported}
-        onClick={() => share(currentTrack, text, "album")}
+        onClick={() => share(currentTrack, text, type)}
       >
         <ShareIcon className="w-10 h-10" />
       </button>
     </div>
   );
 };
-
-type ShareType = "track" | "album";
 
 const buildDefaultShareText = (currentTrack: PlaybackState, type: ShareType) => {
   if (currentTrack.currently_playing_type !== "track") {
@@ -74,8 +77,8 @@ const getShareUrl = (currentTrack: PlaybackState, type: ShareType) => {
 };
 
 const share = async (currentTrack: PlaybackState, textareaText: string, type: ShareType) => {
-  // Chrome (Android): `text`` is concatination of `url` and `text`(?)
-  // Firefox (Android): Only `url` is used(?)
+  // Chrome (Android): `text` is concatination of `url` and `text`(?)
+  // Firefox (Android): `text` is not supported. https://caniuse.com/mdn-api_navigator_share_data_text_parameter
   const shareUrl = getShareUrl(currentTrack, type) || undefined;
   const shareText = shareUrl ? `${textareaText}\n${shareUrl}` : textareaText;
   const shareOpt = {
