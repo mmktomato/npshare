@@ -11,9 +11,10 @@ interface ShareProps {
   spotifyApi: SpotifyApi;
   className?: string;
   type: ShareType;
+  outerRef: React.RefObject<HTMLDivElement>;
 }
 
-export const Share: React.FC<ShareProps> = ({ spotifyApi, className, type }) => {
+export const Share: React.FC<ShareProps> = ({ spotifyApi, className, type, outerRef }) => {
   const {
     data: currentTrack,
     error,
@@ -39,7 +40,10 @@ export const Share: React.FC<ShareProps> = ({ spotifyApi, className, type }) => 
   const isShareSupported = "share" in navigator;
 
   return (
-    <div className={clsx("flex", "gap-4", "items-center", className)}>
+    <div
+      className={clsx("flex", "gap-4", "items-center", className)}
+      ref={outerRef}
+    >
       <textarea
         className="h-24 leading-6 p-2 border rounded border-gray-400"
         value={text}
