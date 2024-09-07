@@ -49,7 +49,12 @@ export const App = () => {
           </div>
         </>
       ) : (
-        <button onClick={onAuthClick}>auth</button>
+        <button
+          className="border border-gray-700 rounded p-2 cursor-pointer"
+          onClick={onAuthClick}
+        >
+          Login to Spotify
+        </button>
       )}
     </div>
   );
