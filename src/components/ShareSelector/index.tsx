@@ -1,30 +1,26 @@
-import { useState } from "react";
 import { clsx } from "clsx";
 
-interface RefTitlePair {
-  ref: React.RefObject<HTMLElement>;
-  title: string;
+import { TitleType } from "../../types";
+
+interface TitleOption {
+  title: TitleType;
+  selected: boolean;
 }
 
 interface ShareSelectorProps {
-  refTitles: RefTitlePair[];
+  options: TitleOption[];
+  onSelect: (title: TitleType) => void;
 }
 
-export const ShareSelector: React.FC<ShareSelectorProps> = ({ refTitles }) => {
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const onClick = (index: number) => {
-    refTitles[index].ref.current?.scrollIntoView({ inline: "start" });
-    setSelectedIndex(index);
-  };
-
+export const ShareSelector: React.FC<ShareSelectorProps> = ({ options, onSelect }) => {
   return (
     <div className="flex w-56 justify-around">
-      {refTitles.map(({ title }, i) => (
+      {options.map(({ title, selected }) => (
         <div
-          key={i}
-          onClick={() => onClick(i)}
+          key={title}
+          onClick={() => onSelect(title)}
           className={clsx("p-2", "cursor-pointer", {
-            "border-b-2 border-b-blue-500": selectedIndex === i,
+            "border-b-2 border-b-blue-500": selected,
           })}
         >
           {title}

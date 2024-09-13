@@ -2,19 +2,18 @@ import { useEffect, useState } from "react";
 import { type SpotifyApi, type PlaybackState, type Track } from "@spotify/web-api-ts-sdk";
 import { clsx } from "clsx";
 
+import { ShareType } from "../../types";
 import { useSpotifyFetcher, CURRENT_TRACK_KEY } from "../../utils/spotifyFetcher";
 import ShareIcon from "../../assets/share.svg?react";
 
-type ShareType = "track" | "album";
-
-interface ShareProps {
+interface ShareItemProps {
   spotifyApi: SpotifyApi;
   className?: string;
   type: ShareType;
   outerRef: React.RefObject<HTMLDivElement>;
 }
 
-export const Share: React.FC<ShareProps> = ({ spotifyApi, className, type, outerRef }) => {
+export const ShareItem: React.FC<ShareItemProps> = ({ spotifyApi, className, type, outerRef }) => {
   const {
     data: currentTrack,
     error,
