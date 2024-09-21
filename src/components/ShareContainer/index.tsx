@@ -44,7 +44,7 @@ export const ShareContainer: React.FC<ShareContainerProps> = ({ spotifyApi }) =>
   }, []);
 
   return (
-    <div>
+    <div className="flex flex-col items-center gap-4">
       <ShareSelector
         options={[
           { title: "Album", selected: selectedTitle === "Album" },
@@ -53,7 +53,7 @@ export const ShareContainer: React.FC<ShareContainerProps> = ({ spotifyApi }) =>
         onSelect={onSelect}
       />
       <div
-        className="mt-4 flex gap-4 max-w-64 overflow-x-scroll scroll-smooth snap-x snap-mandatory"
+        className="flex gap-4 max-w-64 overflow-x-scroll scroll-smooth snap-x snap-mandatory"
         onScroll={onScroll}
       >
         <ShareItem

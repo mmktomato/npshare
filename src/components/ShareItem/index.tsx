@@ -40,11 +40,11 @@ export const ShareItem: React.FC<ShareItemProps> = ({ spotifyApi, className, typ
 
   return (
     <div
-      className={clsx("flex", "gap-4", "items-center", className)}
+      className={clsx("flex", "flex-col", "gap-4", "items-center", className)}
       ref={outerRef}
     >
       <textarea
-        className="h-24 leading-6 p-2 border rounded border-gray-400"
+        className="h-24 w-64 leading-6 p-2 border rounded border-gray-400"
         value={text}
         onChange={onChange}
       />
