@@ -5,6 +5,7 @@ import { clsx } from "clsx";
 import { ShareType } from "../../types";
 import { useSpotifyFetcher, CURRENT_TRACK_KEY } from "../../utils/spotifyFetcher";
 import ShareIcon from "../../assets/share.svg?react";
+import SpotifyLogo from "../../assets/spotify.svg?react";
 
 interface ShareTexts {
   artist: string;
@@ -80,13 +81,24 @@ export const ShareItem: React.FC<ShareItemProps> = ({ spotifyApi, className, typ
         value={shareTexts?.hashtag || ""}
         onChange={onHashtagChange}
       />
-      <button
-        className="w-fit h-fit p-2"
-        disabled={!isShareSupported || !shareTexts}
-        onClick={() => share(shareTexts!)}
-      >
-        <ShareIcon className="w-10 h-10" />
-      </button>
+      <div className="flex">
+        <button
+          className="p-2"
+          disabled={!isShareSupported || !shareTexts}
+          onClick={() => share(shareTexts!)}
+        >
+          <ShareIcon className="w-8 h-8" />
+        </button>
+        {type === "album" && !!shareTexts && (
+          <a
+            target="_blank"
+            href={shareTexts.url}
+            className="p-2"
+          >
+            <SpotifyLogo className="w-8 h-8" />
+          </a>
+        )}
+      </div>
     </div>
   );
 };
