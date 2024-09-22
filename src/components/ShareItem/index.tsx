@@ -6,6 +6,13 @@ import { ShareType } from "../../types";
 import { useSpotifyFetcher, CURRENT_TRACK_KEY } from "../../utils/spotifyFetcher";
 import ShareIcon from "../../assets/share.svg?react";
 
+interface ShareTexts {
+  artist: string;
+  title: string;
+  url: string;
+  hashtag: string;
+}
+
 interface ShareItemProps {
   spotifyApi: SpotifyApi;
   className?: string;
@@ -19,14 +26,23 @@ export const ShareItem: React.FC<ShareItemProps> = ({ spotifyApi, className, typ
     error,
     isLoading,
   } = useSpotifyFetcher(spotifyApi, CURRENT_TRACK_KEY, api => api.player.getCurrentlyPlayingTrack());
-  const [text, setText] = useState("");
-  const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => setText(e.target.value);
+  const [shareTexts, setShareTexts] = useState<ShareTexts | undefined>(undefined);
 
   useEffect(() => {
     if (currentTrack) {
-      setText(buildDefaultShareText(currentTrack, type));
+      setShareTexts(getDefaultShareTexts(currentTrack, type));
     }
   }, [currentTrack, type]);
+
+  const onArtistChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setShareTexts(shareTexts ? { ...shareTexts, artist: e.target.value } : undefined);
+  };
+  const onTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setShareTexts(shareTexts ? { ...shareTexts, title: e.target.value } : undefined);
+  };
+  const onHashtagChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setShareTexts(shareTexts ? { ...shareTexts, hashtag: e.target.value } : undefined);
+  };
 
   if (isLoading || !currentTrack) {
     return null;
@@ -38,20 +54,36 @@ export const ShareItem: React.FC<ShareItemProps> = ({ spotifyApi, className, typ
 
   const isShareSupported = "share" in navigator;
 
+  const inputClassName = "w-full text-sm px-2 py-1 border rounded-sm border-gray-400";
   return (
     <div
-      className={clsx("flex", "flex-col", "gap-4", "items-center", className)}
+      className={clsx("flex", "flex-col", "gap-1", "items-center", className)}
       ref={outerRef}
     >
-      <textarea
-        className="h-24 w-64 leading-6 p-2 border rounded border-gray-400"
-        value={text}
-        onChange={onChange}
+      <input
+        className={inputClassName}
+        value={shareTexts?.artist || ""}
+        onChange={onArtistChange}
+      />
+      <input
+        className={inputClassName}
+        value={shareTexts?.title || ""}
+        onChange={onTitleChange}
+      />
+      <input
+        className={clsx(inputClassName, "bg-gray-200")}
+        value={shareTexts?.url || ""}
+        readOnly
+      />
+      <input
+        className={inputClassName}
+        value={shareTexts?.hashtag || ""}
+        onChange={onHashtagChange}
       />
       <button
-        className="w-fit h-fit"
-        disabled={!isShareSupported}
-        onClick={() => share(currentTrack, text, type)}
+        className="w-fit h-fit p-2"
+        disabled={!isShareSupported || !shareTexts}
+        onClick={() => share(shareTexts!)}
       >
         <ShareIcon className="w-10 h-10" />
       </button>
@@ -59,34 +91,33 @@ export const ShareItem: React.FC<ShareItemProps> = ({ spotifyApi, className, typ
   );
 };
 
-const buildDefaultShareText = (currentTrack: PlaybackState, type: ShareType) => {
+const getDefaultShareTexts = (currentTrack: PlaybackState, type: ShareType): ShareTexts | undefined => {
   if (currentTrack.currently_playing_type !== "track") {
-    return "Not playing a track.";
+    return undefined;
   }
-
   const item = currentTrack.item as Track;
-  const artists = item.album.artists.map(artist => artist.name).join(", ");
 
-  return type === "track" ? `${artists} - ${item.name} #np` : `${artists} - ${item.album.name} #np`;
+  return {
+    artist: item.album.artists.map(artist => artist.name).join(", "),
+    title: type === "track" ? item.name : item.album.name,
+    url: getShareUrl(currentTrack, type),
+    hashtag: "#np",
+  };
 };
 
 const getShareUrl = (currentTrack: PlaybackState, type: ShareType) => {
-  if (currentTrack.currently_playing_type !== "track") {
-    return null;
-  }
-
   const item = currentTrack.item as Track;
-  return type === "track" ? item.external_urls.spotify : item.album.external_urls.spotify;
+  return type === "album" ? item.album.external_urls.spotify : item.external_urls.spotify;
 };
 
-const share = async (currentTrack: PlaybackState, textareaText: string, type: ShareType) => {
+const share = async (shareTexts: ShareTexts) => {
+  const text = `${shareTexts.artist} - ${shareTexts.title} ${shareTexts.hashtag}\n${shareTexts.url}`;
+
   // Chrome (Android): `text` is concatination of `url` and `text`(?)
   // Firefox (Android): `text` is not supported. https://caniuse.com/mdn-api_navigator_share_data_text_parameter
-  const shareUrl = getShareUrl(currentTrack, type) || undefined;
-  const shareText = shareUrl ? `${textareaText}\n${shareUrl}` : textareaText;
   const shareOpt = {
     // title:
-    text: shareText,
+    text,
     // url:
   };
   // console.log(shareOpt);

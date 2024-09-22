@@ -53,21 +53,23 @@ export const ShareContainer: React.FC<ShareContainerProps> = ({ spotifyApi }) =>
         onSelect={onSelect}
       />
       <div
-        className="flex gap-4 max-w-64 overflow-x-scroll scroll-smooth snap-x snap-mandatory"
+        className="max-w-64 overflow-x-scroll scroll-smooth snap-x snap-mandatory"
         onScroll={onScroll}
       >
-        <ShareItem
-          type="album"
-          className="snap-start"
-          spotifyApi={spotifyApi}
-          outerRef={albumRef}
-        />
-        <ShareItem
-          type="track"
-          className="snap-start"
-          spotifyApi={spotifyApi}
-          outerRef={trackRef}
-        />
+        <div className="flex w-2x">
+          <ShareItem
+            type="album"
+            className="snap-start grow px-1"
+            spotifyApi={spotifyApi}
+            outerRef={albumRef}
+          />
+          <ShareItem
+            type="track"
+            className="snap-start grow px-1"
+            spotifyApi={spotifyApi}
+            outerRef={trackRef}
+          />
+        </div>
       </div>
     </div>
   );
