@@ -110,7 +110,7 @@ const getDefaultShareTexts = (currentTrack: PlaybackState, type: ShareType): Sha
   const item = currentTrack.item as Track;
 
   return {
-    artist: item.album.artists.map(artist => artist.name).join(", "),
+    artist: (type === "track" ? item.artists : item.album.artists).map(artist => artist.name).join(", "),
     title: type === "track" ? item.name : item.album.name,
     url: getShareUrl(currentTrack, type),
     hashtag: "#np",
